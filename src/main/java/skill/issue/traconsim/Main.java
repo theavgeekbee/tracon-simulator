@@ -14,13 +14,13 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 import static skill.issue.traconsim.Main.Action.ALT_SEL;
 
 public class Main {
+    private static final Random RNG = new Random();
     /*
     UNDER ABSOLUTELY NO CIRCUMSTANCES SHOULD THIS VARIABLE BE TOUCHED OR CHANGED
     I REPEAT. ***NO*** CHANGES TO THIS VARIABLE
     THIS WILL AFFECT THE LOOK AND FEEL OF THE MOVEMENT OF THE AIRCRAFT
     THIS WILL ***NOT*** BE CHANGED UNDER ANY CIRCUMSTANCE
     */
-    private static final Random RNG = new Random();
     private static final double SPD_CONVERSION = 0.0005/180;
     static int selectedDb = -1;
     static String enteredText = "";

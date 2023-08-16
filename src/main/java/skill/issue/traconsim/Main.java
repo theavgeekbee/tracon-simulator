@@ -62,7 +62,6 @@ public class Main {
         }
         System.out.println(Arrays.toString(digits));
         for (int i = 2; i >= 0; i--) {
-            System.out.println("rendered number " + digits[i] + " at " + x + ", " + y);
             renderNumber(digits[i], x, y);
             x+=0.013;
         }

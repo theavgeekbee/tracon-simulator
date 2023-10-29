@@ -4,7 +4,7 @@ import java.awt.*;
 import java.io.IOException;
 
 public class FontTester {
-    public static void main(String[] args) throws IOException, FontFormatException {
-        VRCFont.init();
+    public static void main(String[] args) throws Exception {
+        VRCFont.init(64);
     }
 }

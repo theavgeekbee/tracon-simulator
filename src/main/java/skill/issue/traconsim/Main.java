@@ -36,7 +36,7 @@ public class Main {
         while (!glfwWindowShouldClose(win)) {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-            TextRenderer.renderText("AAL123", new Vector2d(-1,0), new Vector2d(0.3,0.05));
+            Renderer.doRenderTick();
 
             glfwSwapBuffers(win);
             glfwPollEvents();
@@ -47,6 +47,7 @@ public class Main {
         glfwTerminate();
         glfwSetErrorCallback(null);
         VRCFont.cleanupBitmaps();
+        TextRenderer.cleanupAlias();
     }
     public static void main(String[] args) throws Exception {
         init();

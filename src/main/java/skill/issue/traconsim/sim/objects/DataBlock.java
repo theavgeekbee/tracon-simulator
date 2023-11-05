@@ -30,5 +30,8 @@ public class DataBlock {
     public void update() {
         heading += (assignedHeading - heading) / 50;
         if (assignedHeading-heading < 2) heading = assignedHeading;
+
+        x += speed * Math.sin(Math.toRadians(heading)) * 0.0001;
+        y += speed * Math.cos(Math.toRadians(heading)) * 0.0001;
     }
 }

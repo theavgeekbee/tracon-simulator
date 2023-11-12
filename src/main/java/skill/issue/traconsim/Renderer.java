@@ -2,21 +2,24 @@ package skill.issue.traconsim;
 
 import org.joml.Vector2d;
 import org.joml.Vector2f;
-import skill.issue.dim2d.Superimposition;
-import skill.issue.dim2d.Vertex;
+import org.joml.Vector3d;
 import skill.issue.dim2d.VertexBufferBuilder;
 import skill.issue.dim2d.VertexBuilder;
 import skill.issue.dim2d.text.TextRenderer;
 import skill.issue.traconsim.sim.objects.DataBlock;
+import skill.issue.traconsim.sim.utils.Colors;
 
-import java.util.Vector;
+import java.util.ArrayList;
 
-import static skill.issue.dim2d.Superimposition.*;
 import static org.lwjgl.opengl.GL11.*;
+import static skill.issue.dim2d.Superimposition.*;
 
 public class Renderer {
     private static final double DB_SIZE = 2;
-    private static final DataBlock db = new DataBlock("AAL123", 10000, 90, 250, 50,50);
+    public static ArrayList<DataBlock> dataBlocks = new ArrayList<>();
+    static {
+        dataBlocks.add(new DataBlock("AAL123", 10000, 90, 250, 50,50));
+    }
 
     public static void doRenderTick() {
         preRenderTick();
@@ -24,9 +27,16 @@ public class Renderer {
     }
 
     public static void preRenderTick() {
-        db.update();
+        for (DataBlock db : dataBlocks) {
+            db.update();
+        }
     }
     public static void renderTick() {
+        for (DataBlock db : dataBlocks) {
+            renderDataBlock(db);
+        }
+    }
+    public static void renderDataBlock(DataBlock db) {
         pushMatrix();
         translate$f(new Vector2f((float) db.x, (float) db.y));
         rotate$d(db.heading);
@@ -69,6 +79,32 @@ public class Renderer {
         glVertex2d(start.x, start.y);
         glVertex2d(end.x, end.y);
         glEnd();
-        TextRenderer.renderText(db.callsign, new Vector2d(db.x,db.y).add(5,5).div(100), new Vector2d(0.05,0.05).mul(new Vector2d(db.callsign.length(), 1)));
+
+        Vector3d color = Colors.NULL.getColor();
+        switch (db.status) {
+
+            case OWNED -> {
+                color = Colors.OWNED.getColor();
+            }
+            case UNOWNED -> {
+                color = Colors.UNOWNED.getColor();
+            }
+            case PO -> {
+                color = Colors.PO.getColor();
+            }
+            case HO -> {
+                if (db.hoTicks % 50 < 25) {
+                    color = Colors.HO_BLINK.getColor();
+                } else {
+                    color = Colors.OWNED.getColor();
+                }
+            }
+        }
+        TextRenderer.renderText(
+                db.callsign,
+                new Vector2d(db.x,db.y).add(5,5).div(100),
+                new Vector2d(0.05,0.05).mul(new Vector2d(db.callsign.length(), 1)),
+                color
+        );
     }
 }

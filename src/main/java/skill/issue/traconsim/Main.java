@@ -1,20 +1,17 @@
 package skill.issue.traconsim;
 
-import org.joml.Vector2d;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 import skill.issue.dim2d.Superimposition;
 import skill.issue.dim2d.text.TextRenderer;
 import skill.issue.dim2d.text.VRCFont;
-
-import java.io.File;
-import java.io.IOException;
+import skill.issue.traconsim.sim.objects.Owner;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL13.GL_MULTISAMPLE;
 
 public class Main {
+    public static final Owner POSITION = Owner.APP;
     private static long win;
     public static void init() throws Exception {
         System.out.println("Initiating GLFW and GL");

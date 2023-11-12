@@ -1,6 +1,7 @@
 package skill.issue.traconsim.sim.objects;
 
-import javax.xml.crypto.Data;
+import skill.issue.traconsim.Main;
+import skill.issue.traconsim.sim.utils.DBStatus;
 
 public class DataBlock {
     public String callsign;
@@ -11,6 +12,9 @@ public class DataBlock {
     public double y;
     public int assignedAltitude;
     public double assignedHeading;
+    public Owner owner = Owner.NONE;
+    public DBStatus status = DBStatus.UNOWNED;
+    public long hoTicks = 0;
 
     public DataBlock(String callsign, int altitude, double heading, int speed, double x, double y) {
         this.callsign = callsign;
@@ -33,5 +37,12 @@ public class DataBlock {
 
         x += speed * Math.sin(Math.toRadians(heading)) * 0.0001;
         y += speed * Math.cos(Math.toRadians(heading)) * 0.0001;
+
+        if (owner == Main.POSITION) {
+            status = DBStatus.OWNED;
+        }
+        if (status == DBStatus.HO) {
+            hoTicks++;
+        } else hoTicks = 0;
     }
 }

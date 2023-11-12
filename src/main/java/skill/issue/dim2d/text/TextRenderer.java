@@ -1,6 +1,8 @@
 package skill.issue.dim2d.text;
 
 import org.joml.Vector2d;
+import org.joml.Vector3d;
+import org.joml.Vector3f;
 import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryStack;
 import skill.issue.dim2d.utils.Alias;
@@ -43,7 +45,10 @@ public class TextRenderer {
             STBImage.stbi_image_free(a.buf());
         }
     }
-    public static void renderText(String s, Vector2d pos, Vector2d dim) {
+    public static void renderText(String s, Vector2d pos, Vector2d dim, Vector3d color) {
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glColor3d(color.x, color.y, color.z);
         double charWidth = dim.x/s.length();
         double x = pos.x;
         for (char c : s.toCharArray()) {
@@ -55,6 +60,7 @@ public class TextRenderer {
             renderChar(c, new Vector2d(x, pos.y), new Vector2d(charWidth, dim.y));
             x += charWidth;
         }
+        glDisable(GL_BLEND);
     }
     private static void renderChar(char s, Vector2d pos, Vector2d dim) {
         Alias a = alias.get(s);

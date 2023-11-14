@@ -6,32 +6,17 @@ import org.joml.Vector3d;
 import skill.issue.dim2d.VertexBufferBuilder;
 import skill.issue.dim2d.VertexBuilder;
 import skill.issue.dim2d.text.TextRenderer;
+import skill.issue.traconsim.sim.fsd.FSDPipelineSupplier;
 import skill.issue.traconsim.sim.objects.DataBlock;
 import skill.issue.traconsim.sim.utils.Colors;
-
-import java.util.ArrayList;
 
 import static org.lwjgl.opengl.GL11.*;
 import static skill.issue.dim2d.Superimposition.*;
 
 public class Renderer {
     private static final double DB_SIZE = 2;
-    public static ArrayList<DataBlock> dataBlocks = new ArrayList<>();
-    static {
-        dataBlocks.add(new DataBlock("AAL123", 10000, 90, 250, 50,50));
-    }
-
     public static void doRenderTick() {
-        preRenderTick();
-        renderTick();
-    }
-
-    public static void preRenderTick() {
-        for (DataBlock db : dataBlocks) {
-            db.update();
-        }
-    }
-    public static void renderTick() {
+        DataBlock[] dataBlocks = FSDPipelineSupplier.getDataBlocks();
         for (DataBlock db : dataBlocks) {
             renderDataBlock(db);
         }

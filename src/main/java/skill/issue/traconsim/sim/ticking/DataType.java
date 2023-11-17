@@ -1,0 +1,13 @@
+package skill.issue.traconsim.sim.ticking;
+
+public enum DataType {
+    NO_UPDATE,
+    TGT_HEADING_CHANGE,
+    TGT_ALTITUDE_CHANGE,
+    TGT_SPEED_CHANGE,
+    HANDOFF_INITIATE,
+    HANDOFF_ACCEPT,
+    HANDOFF_REFUSE,
+    POINTOUT_INITIATE,
+    POINTOUT_ACKNOWLEDGE
+}

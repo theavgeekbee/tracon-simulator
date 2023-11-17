@@ -5,8 +5,8 @@ import org.lwjgl.opengl.GL;
 import skill.issue.dim2d.Superimposition;
 import skill.issue.dim2d.text.TextRenderer;
 import skill.issue.dim2d.text.VRCFont;
-import skill.issue.traconsim.sim.fsd.FSDPipelineSupplier;
-import skill.issue.traconsim.sim.fsd.impl.TestFSDImpl;
+import skill.issue.traconsim.sim.fsd.FSDSupplier;
+import skill.issue.traconsim.sim.fsd.impl.FSDImpl;
 import skill.issue.traconsim.sim.objects.Owner;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -28,7 +28,7 @@ public class Main {
         Superimposition.init(100);
         System.out.println("Generating bitmaps for text rendering");
         TextRenderer.init();
-        FSDPipelineSupplier.initializeFSD(new TestFSDImpl());
+        FSDSupplier.setFsd(new FSDImpl());
     }
     public static void loop() {
         GL.createCapabilities();
@@ -48,7 +48,6 @@ public class Main {
         glfwSetErrorCallback(null);
         VRCFont.cleanupBitmaps();
         TextRenderer.cleanupAlias();
-        FSDPipelineSupplier.terminateFSD();
     }
     public static void main(String[] args) throws Exception {
         init();

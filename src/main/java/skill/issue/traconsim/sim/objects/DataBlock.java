@@ -12,7 +12,10 @@ public class DataBlock {
     public double y;
     public int assignedAltitude;
     public double assignedHeading;
+    public int assignedSpeed;
     public Owner owner = Owner.NONE;
+    public Owner handoffTarget = Owner.NONE;
+    public Owner pointoutTarget = Owner.NONE;
     public DBStatus status = DBStatus.UNOWNED;
     public long hoTicks = 0;
 
@@ -31,9 +34,21 @@ public class DataBlock {
     public void setHeading(double heading) {
         this.assignedHeading = heading;
     }
+    public void setAltitude(int altitude) {
+        this.assignedAltitude = altitude;
+    }
+    public void setSpeed(int speed) {
+        this.assignedSpeed = speed;
+    }
     public void update() {
         heading += (assignedHeading - heading) / 50;
         if (assignedHeading-heading < 2) heading = assignedHeading;
+
+        altitude += (assignedAltitude - altitude) / 50;
+        if (assignedAltitude-altitude < 2) altitude = assignedAltitude;
+
+        speed += (assignedSpeed - speed) / 50;
+        if (assignedSpeed-speed < 2) speed = assignedSpeed;
 
         x += speed * Math.sin(Math.toRadians(heading)) * 0.0001;
         y += speed * Math.cos(Math.toRadians(heading)) * 0.0001;

@@ -6,20 +6,36 @@ import org.joml.Vector3d;
 import skill.issue.dim2d.VertexBufferBuilder;
 import skill.issue.dim2d.VertexBuilder;
 import skill.issue.dim2d.text.TextRenderer;
-import skill.issue.traconsim.sim.fsd.FSDPipelineSupplier;
+import skill.issue.traconsim.sim.fsd.FSDSupplier;
+import skill.issue.traconsim.sim.fsd.TickContext;
 import skill.issue.traconsim.sim.objects.DataBlock;
+import skill.issue.traconsim.sim.ticking.DataType;
+import skill.issue.traconsim.sim.ticking.TickData;
+import skill.issue.traconsim.sim.ticking.TickingDataBlockInformation;
 import skill.issue.traconsim.sim.utils.Colors;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.lwjgl.opengl.GL11.*;
 import static skill.issue.dim2d.Superimposition.*;
 
 public class Renderer {
+    private static long tick = 0;
     private static final double DB_SIZE = 2;
     public static void doRenderTick() {
-        DataBlock[] dataBlocks = FSDPipelineSupplier.getDataBlocks();
+        DataBlock[] dataBlocks = FSDSupplier.getDataBlocks();
         for (DataBlock db : dataBlocks) {
             renderDataBlock(db);
         }
+        TickingDataBlockInformation[] dbInfo = new TickingDataBlockInformation[dataBlocks.length];
+        for (int i = 0; i < dataBlocks.length; i++) {
+            dbInfo[i] = new TickingDataBlockInformation(dataBlocks[i].callsign, new TickData[]{
+                    new TickData(DataType.NO_UPDATE, null)
+            });
+        }
+        TickContext ctx = new TickContext(tick++, new ArrayList<>(List.of(dbInfo)));
+        FSDSupplier.doTick(ctx);
     }
     public static void renderDataBlock(DataBlock db) {
         pushMatrix();

@@ -8,20 +8,19 @@ import skill.issue.traconsim.sim.ticking.TickData;
 import skill.issue.traconsim.sim.ticking.TickingDataBlockInformation;
 import skill.issue.traconsim.sim.utils.DBStatus;
 
-import javax.xml.crypto.Data;
-import java.util.ArrayList;
-import java.util.List;
-
 public class FSDImpl implements IFSD {
-    ArrayList<DataBlock> dataBlocks = new ArrayList<>(List.of(new DataBlock("N12345", 10000, 0, 250, 0, 0)));
+    DataBlock[] dataBlocks = new DataBlock[]{
+            new DataBlock("N12345", 10000, 0, 250, 0, 0),
+    };
     @Override
     public DataBlock[] getDataBlocks() {
-        return dataBlocks.toArray(new DataBlock[0]);
+        return dataBlocks;
     }
 
     @Override
     public void doTick(TickContext ctx) {
-        for (DataBlock db : dataBlocks) {
+        for (int i = 0; i < dataBlocks.length; i++) {
+            DataBlock db = dataBlocks[i];
             TickingDataBlockInformation dbInfo = ctx.getDataBlock(db.callsign);
             for (TickData td : dbInfo.tickData()) {
                 switch (td.dataType) {
@@ -54,7 +53,7 @@ public class FSDImpl implements IFSD {
                     }
                 }
             }
-            db.update();
+            dataBlocks[i] = db.update();
         }
     }
 }

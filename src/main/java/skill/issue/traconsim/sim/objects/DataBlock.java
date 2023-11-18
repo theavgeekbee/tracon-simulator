@@ -29,6 +29,7 @@ public class DataBlock {
 
         assignedAltitude = altitude;
         assignedHeading = heading;
+        assignedSpeed = speed;
     }
 
     public void setHeading(double heading) {
@@ -40,7 +41,7 @@ public class DataBlock {
     public void setSpeed(int speed) {
         this.assignedSpeed = speed;
     }
-    public void update() {
+    public DataBlock update() {
         heading += (assignedHeading - heading) / 50;
         if (assignedHeading-heading < 2) heading = assignedHeading;
 
@@ -59,5 +60,7 @@ public class DataBlock {
         if (status == DBStatus.HO) {
             hoTicks++;
         } else hoTicks = 0;
+
+        return this;
     }
 }

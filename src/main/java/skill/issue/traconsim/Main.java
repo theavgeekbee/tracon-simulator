@@ -33,6 +33,12 @@ public class Main {
     public static void loop() {
         GL.createCapabilities();
         glClearColor(0,0,0,1);
+
+        glfwSetKeyCallback(win, (window, key, scancode, action, mods) -> {
+            if (key == GLFW_KEY_D) {
+                FSDSupplier.getDataBlocks()[0].setHeading(180);
+            }
+        });
         while (!glfwWindowShouldClose(win)) {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

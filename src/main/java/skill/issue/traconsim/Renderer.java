@@ -22,7 +22,7 @@ import static skill.issue.dim2d.Superimposition.*;
 
 public class Renderer {
     private static long tick = 0;
-    private static final double DB_SIZE = 2;
+    private static final double DB_SIZE = 3;
     public static void doRenderTick() {
         DataBlock[] dataBlocks = FSDSupplier.getDataBlocks();
         for (DataBlock db : dataBlocks) {
@@ -47,7 +47,7 @@ public class Renderer {
                 VertexBuilder.alloc().pos(0,0).color(1,1,1).endVertex()
         );
         builder.append(
-                VertexBuilder.alloc().pos(0, -15).color(1,1,1).endVertex()
+                VertexBuilder.alloc().pos(0, 15).color(1,1,1).endVertex()
         );
         superimposeBuffer(builder.end());
 

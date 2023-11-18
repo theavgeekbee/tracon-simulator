@@ -29,6 +29,7 @@ public class DataBlock {
 
         assignedAltitude = altitude;
         assignedHeading = heading;
+        assignedSpeed = speed;
     }
 
     public void setHeading(double heading) {

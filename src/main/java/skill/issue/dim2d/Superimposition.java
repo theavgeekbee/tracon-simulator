@@ -1,12 +1,14 @@
 package skill.issue.dim2d;
 
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector2f;
+import skill.issue.traconsim.Main;
 
 import static org.lwjgl.opengl.GL11.*;
 
 public class Superimposition {
     public enum RenderType {
-        LINE(2),QUAD(4);
+        LINE(2),QUAD(4),CIRCLE(1);
 
         final int vertices;
         RenderType(int vertices) {
@@ -55,7 +57,17 @@ public class Superimposition {
         if (!matrixState) matrixRotation += deg;
         else matrixRotation = deg;
     }
-    public static void superimposeBuffer(VertexBufferBuilder.FinishedVertexBuffer b) {
+    private static Vertex[] toCircle(Vertex center, double radius) {
+        Vertex[] vertices = new Vertex[100];
+        for (int i = 0; i < 100; i++) {
+            double angle = 2d * Math.PI * i / 100d;
+            double x = center.x() + radius * Math.cos(angle) / Main.ASPECT_RATIO;
+            double y = center.y() + radius * Math.sin(angle);
+            vertices[i] = new Vertex(x, y, center.r(), center.g(), center.b());
+        }
+        return vertices;
+    }
+    public static void superimposeBuffer(VertexBufferBuilder.FinishedVertexBuffer b, @Nullable Object... args) {
         checkDimension();
         VertexBuilder.FinishedVertex[] finishedVertices = b.getBuffer();
         Vertex[] v = new Vertex[finishedVertices.length];
@@ -66,6 +78,24 @@ public class Superimposition {
         Vector2f normTranslation = matrixState ? project(matrixTranslation) : matrixTranslation;
         glTranslatef(normTranslation.x,  normTranslation.y, 0);
         glRotated(matrixRotation,0,0,1);
+        if (finishedVertices.length == 1) {
+            if (!(args.length > 0)) throw new IllegalArgumentException("Expected type double, got null");
+            if (!(args[0] instanceof Double)) {
+                assert args[0] != null;
+                throw new IllegalArgumentException("Expected type double, got " + args[0].getClass().getName());
+            }
+            glBegin(GL_LINE_LOOP);
+            Vertex[] circle = toCircle(v[0], (double) args[0]);
+            for (Vertex vtx : circle) {
+                if (vtx.isInitialized()) throw new IllegalStateException("Attempted to superimpose buffer with uninitialized vertex");
+                Vector2f pos = new Vector2f((float) vtx.x(), (float) vtx.y());
+                if (matrixState) pos = project(pos);
+                glColor3d(vtx.r(), vtx.g(), vtx.b());
+                glVertex2f(pos.x, pos.y);
+            }
+            glEnd();
+            return;
+        }
         if (finishedVertices.length == 2) glBegin(GL_LINES);
         else if (finishedVertices.length == 4) glBegin(GL_QUADS);
         else throw new IllegalArgumentException("Invalid number of vertices");

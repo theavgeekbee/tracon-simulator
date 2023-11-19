@@ -17,7 +17,7 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 
 public class TextRenderer {
-    private static HashMap<Character, Alias> alias = new HashMap<>();
+    private static final HashMap<Character, Alias> alias = new HashMap<>();
     public static void init() throws IOException, FontFormatException {
         VRCFont.init(64);
         System.out.print("Generating alias map...");
@@ -49,7 +49,7 @@ public class TextRenderer {
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glColor3d(color.x, color.y, color.z);
-        double charWidth = dim.x/s.length();
+        double charWidth = dim.x/(s.length() * 4/3d);
         double x = pos.x;
         for (char c : s.toCharArray()) {
 
@@ -58,7 +58,7 @@ public class TextRenderer {
                 continue;
             }
             renderChar(c, new Vector2d(x, pos.y), new Vector2d(charWidth, dim.y));
-            x += charWidth;
+            x += charWidth * 0.75;
         }
         glDisable(GL_BLEND);
     }

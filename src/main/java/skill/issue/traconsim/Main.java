@@ -15,17 +15,20 @@ import static org.lwjgl.opengl.GL11.*;
 public class Main {
     public static final Owner POSITION = Owner.APP;
     private static long win;
+    public static final double ASPECT_RATIO = 4/3d;
+    public static final int HEIGHT = 1000;
+    public static final int WIDTH = (int) (HEIGHT * ASPECT_RATIO);
     public static void init() throws Exception {
         System.out.println("Initiating GLFW and GL");
         GLFWErrorCallback.createPrint(System.err).set();
         if (!glfwInit()) throw new IllegalStateException("Unable to initialize GLFW");
-        win = glfwCreateWindow(800,600, "theaviationbee's TRACON Simulator", 0, 0);
+        win = glfwCreateWindow(WIDTH,HEIGHT, "theaviationbee's TRACON Simulator", 0, 0);
         glfwMakeContextCurrent(win);
         glfwSwapInterval(1);
         glfwShowWindow(win);
 
         System.out.println("Initiating Superimposition rendering engine");
-        Superimposition.init(100);
+        Superimposition.init(200);
         System.out.println("Generating bitmaps for text rendering");
         TextRenderer.init();
         FSDSupplier.setFsd(new FSDImpl());
@@ -33,6 +36,16 @@ public class Main {
     public static void loop() {
         GL.createCapabilities();
         glClearColor(0,0,0,1);
+
+        glfwSetMouseButtonCallback(win, (win, button, action, mods) -> {
+            if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+                double[] x = new double[1];
+                double[] y = new double[1];
+                glfwGetCursorPos(win, x, y);
+                System.out.println("Clicked at " + x[0] + ", " + y[0]);
+            }
+        });
+
         while (!glfwWindowShouldClose(win)) {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

@@ -1,5 +1,6 @@
 package skill.issue.traconsim;
 
+import org.joml.Vector2d;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 import skill.issue.dim2d.Superimposition;
@@ -42,7 +43,9 @@ public class Main {
                 double[] x = new double[1];
                 double[] y = new double[1];
                 glfwGetCursorPos(win, x, y);
-                System.out.println("Clicked at " + x[0] + ", " + y[0]);
+                double x2 = x[0] / WIDTH * 2 - 1;
+                double y2 = y[0] / HEIGHT * 2 - 1;
+                Renderer.eventStack.push(new Vector2d(x2, y2));
             }
         });
 

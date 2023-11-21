@@ -1,6 +1,9 @@
 package skill.issue.traconsim.sim.objects;
 
+import org.joml.Vector2d;
+import org.joml.Vector2f;
 import skill.issue.traconsim.Main;
+import skill.issue.traconsim.Renderer;
 import skill.issue.traconsim.sim.utils.DBStatus;
 
 public class DataBlock {
@@ -17,7 +20,9 @@ public class DataBlock {
     public Owner handoffTarget = Owner.NONE;
     public Owner pointoutTarget = Owner.NONE;
     public DBStatus status = DBStatus.UNOWNED;
+    public boolean highlighted = false;
     public long hoTicks = 0;
+    public BoundingBox4d bb;
 
     public DataBlock(String callsign, int altitude, double heading, int speed, double x, double y) {
         this.callsign = callsign;
@@ -30,6 +35,13 @@ public class DataBlock {
         assignedAltitude = altitude;
         assignedHeading = heading;
         assignedSpeed = speed;
+
+        bb = new BoundingBox4d(
+                new Vector2d(-Renderer.DB_SIZE/2, -Renderer.DB_SIZE/2),
+                new Vector2d(Renderer.DB_SIZE/2, -Renderer.DB_SIZE/2),
+                new Vector2d(Renderer.DB_SIZE/2, Renderer.DB_SIZE/2),
+                new Vector2d(-Renderer.DB_SIZE/2, Renderer.DB_SIZE/2)
+        );
     }
 
     public void setHeading(double heading) {

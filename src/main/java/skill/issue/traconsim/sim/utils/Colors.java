@@ -7,6 +7,7 @@ public enum Colors {
     OWNED(new Vector3d(1,1,1)),
     PO(new Vector3d(1,1,0)),
     HO_BLINK(new Vector3d(0.5,0.5,0.5)),
+    HIGHLIGHT(new Vector3d(0,1,1)),
     NULL(new Vector3d(0,0,0))
     ;
     Vector3d color;

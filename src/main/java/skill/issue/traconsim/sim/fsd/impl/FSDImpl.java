@@ -32,7 +32,7 @@ public class FSDImpl implements IFSD {
                     case TGT_SPEED_CHANGE -> db.setSpeed((int) td.data);
                     case HANDOFF_INITIATE -> {
                         db.status = DBStatus.HO;
-                        db.handoffTarget = Owner.valueOf((String) td.data);
+                        db.handoffTarget = (Owner) td.data;
                     }
                     case HANDOFF_ACCEPT -> {
                         db.status = db.handoffTarget == Owner.APP ? DBStatus.OWNED : DBStatus.UNOWNED;
@@ -45,12 +45,16 @@ public class FSDImpl implements IFSD {
                     }
                     case POINTOUT_INITIATE -> {
                         db.status = DBStatus.PO;
-                        db.pointoutTarget = Owner.valueOf((String) td.data);
+                        db.pointoutTarget = (Owner) td.data;
                     }
                     case POINTOUT_ACKNOWLEDGE -> {
                         db.status = db.pointoutTarget == Owner.APP ? DBStatus.OWNED : DBStatus.UNOWNED;
                         db.owner = db.pointoutTarget;
                         db.pointoutTarget = Owner.NONE;
+                    }
+                    case HIGHLIGHT -> {
+                        System.out.println("highlighted db");
+                        db.highlighted = true;
                     }
                 }
             }

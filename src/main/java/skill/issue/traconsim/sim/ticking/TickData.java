@@ -1,6 +1,7 @@
 package skill.issue.traconsim.sim.ticking;
 
 import org.jetbrains.annotations.Nullable;
+import skill.issue.traconsim.sim.objects.Owner;
 
 public class TickData {
     public final DataType dataType;
@@ -18,11 +19,11 @@ public class TickData {
                     dataTypeIncorrect("Number", data.getClass().getSimpleName(), data.toString());
             }
             case HANDOFF_INITIATE, POINTOUT_INITIATE -> {
-                if (data == null) dataTypeIncorrect("String", "null", "null");
-                if  ( data instanceof String )
+                if (data == null) dataTypeIncorrect("Owner", "null", "null");
+                if  ( data instanceof Owner)
                     data1 = data;
                 else
-                    dataTypeIncorrect("String", data.getClass().getSimpleName(), data.toString());
+                    dataTypeIncorrect("Owner", data.getClass().getSimpleName(), data.toString());
             }
         }
 

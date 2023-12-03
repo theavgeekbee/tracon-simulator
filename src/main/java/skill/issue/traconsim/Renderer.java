@@ -3,14 +3,15 @@ package skill.issue.traconsim;
 import org.joml.Vector2d;
 import org.joml.Vector2f;
 import org.joml.Vector3d;
+import org.lwjgl.glfw.GLFW;
 import skill.issue.dim2d.VertexBufferBuilder;
 import skill.issue.dim2d.VertexBuilder;
 import skill.issue.dim2d.text.TextRenderer;
 import skill.issue.traconsim.sim.fsd.FSDSupplier;
 import skill.issue.traconsim.sim.fsd.TickContext;
 import skill.issue.traconsim.sim.objects.DataBlock;
-import skill.issue.traconsim.sim.objects.Owner;
 import skill.issue.traconsim.sim.ticking.DataType;
+import skill.issue.traconsim.sim.ticking.EventStackItem;
 import skill.issue.traconsim.sim.ticking.TickData;
 import skill.issue.traconsim.sim.ticking.TickingDataBlockInformation;
 import skill.issue.traconsim.sim.utils.Colors;
@@ -25,15 +26,17 @@ import static skill.issue.dim2d.Superimposition.*;
 
 public class Renderer {
     private static long tick = 0;
-    public static final double DB_SIZE = 4;
-    public static Stack<Vector2d> eventStack = new Stack<>();
+    public static final double DB_SIZE = 5;
+    public static Stack<EventStackItem> eventStack = new Stack<>();
+    private static String typedText = "";
     public static void doRenderTick() {
         facilityRender();
+        drawStrings();
         DataBlock[] dataBlocks = FSDSupplier.getDataBlocks();
         for (DataBlock db : dataBlocks) {
             renderDataBlock(db);
         }
-        ArrayList<Vector2d> events = new ArrayList<>();
+        ArrayList<EventStackItem> events = new ArrayList<>();
         for (int i = 0; i < eventStack.size(); i++) {
             events.add(eventStack.pop());
         }
@@ -41,12 +44,40 @@ public class Renderer {
         for (int i = 0; i < dataBlocks.length; i++) {
             ArrayList<TickData> tickData = new ArrayList<>();
             int finalI = i;
-            if (events.stream().anyMatch(x -> dataBlocks[finalI].bb.doesCollide(x))) {
-                if (dataBlocks[i].status != DBStatus.HO) tickData.add(new TickData(DataType.HANDOFF_INITIATE, Owner.APP));
-                if (dataBlocks[i].status == DBStatus.HO && dataBlocks[i].owner != Main.POSITION) tickData.add(new TickData(DataType.HANDOFF_ACCEPT, null));
-                if (dataBlocks[i].owner == Main.POSITION) {
-                    System.out.println("highlighting db");
-                    tickData.add(new TickData(DataType.HIGHLIGHT, null));
+            if (events.stream().anyMatch(x -> dataBlocks[finalI].bb.doesCollide(x.position()))) {
+                List<EventStackItem> items = events.stream().filter(x -> dataBlocks[finalI].bb.doesCollide(x.position())).toList();
+                for (EventStackItem item : items) {
+                    if (item.data().equals("HIGHLIGHT")) {
+                        tickData.add(new TickData(DataType.HIGHLIGHT, null));
+                    }
+                    if (item.data().equals("SLEW")) {
+                        if (dataBlocks[i].status == DBStatus.HO && dataBlocks[i].owner != Main.POSITION) {
+                            tickData.add(new TickData(DataType.HANDOFF_ACCEPT, null));
+                        } else {
+                            typedText += dataBlocks[i].callsign;
+                        }
+                    }
+                    if (item.data().equals("KEY")) {
+                        int key = item.key();
+                        if (key == GLFW.GLFW_KEY_BACKSPACE) {
+                            if (typedText.length() > 0) typedText = typedText.substring(0, typedText.length() - 1);
+                        }
+                        else if (key == GLFW.GLFW_KEY_ENTER) {
+                            if (typedText.startsWith("IC ")) {
+                                tickData.add(new TickData(DataType.TRACK_INITIATE, null));
+                            }
+                            typedText = "";
+                        }
+                        else if (key == GLFW.GLFW_KEY_F3) {
+                            typedText += "IC ";
+                        }
+                        else if (key == GLFW.GLFW_KEY_F4) {
+                            typedText += "TC ";
+                        }
+                        else {
+                            typedText += (char) key;
+                        }
+                    }
                 }
             }
             else
@@ -55,6 +86,19 @@ public class Renderer {
         }
         TickContext ctx = new TickContext(tick++, new ArrayList<>(List.of(dbInfo)));
         FSDSupplier.doTick(ctx);
+    }
+    public static void drawStrings() {
+        Vector2d mat = new Vector2d(-1,1).sub(0,0.03);
+        TextRenderer.renderText(typedText, mat, new Vector2d(0.03 * typedText.length(),0.03), new Vector3d(1,1,1));
+        mat.sub(0,0.1);
+        TextRenderer.renderText("Online Positions", mat, new Vector2d(0.51,0.03), new Vector3d(1,1,1));
+        mat.sub(0,0.04);
+        String[] onlinePositions = new String[] {"9D I90_D_APP", "ET IAH_E_TWR", "81 HOU_81_CTR"};
+        for (String s : onlinePositions) {
+            TextRenderer.renderText(s, mat, new Vector2d(0.03 * s.length(),0.03), s.substring(3).equals(Main.POSITION_STRING) ? new Vector3d(0,1,0) : new Vector3d(1,1,1));
+            mat.sub(0,0.04);
+        }
+
     }
     public static void facilityRender() {
         pushMatrix();
@@ -194,6 +238,13 @@ public class Renderer {
         superimposeBuffer(builder.end());
 
         popMatrix();
+        glColor3f(1,1,1);
+        Vector2d start = new Vector2d(db.x, db.y).div(200);
+        Vector2d end = new Vector2d(db.x, db.y).add(5,5).div(200);
+        glBegin(GL_LINES);
+        glVertex2d(start.x, start.y);
+        glVertex2d(end.x, end.y);
+        glEnd();
         pushMatrix();
         translate$f(new Vector2f((float) db.x, (float) db.y));
         rotate$d(db.heading);
@@ -215,14 +266,6 @@ public class Renderer {
 
         popMatrix();
 
-        glColor3f(1,1,1);
-        Vector2d start = new Vector2d(db.x, db.y).div(200);
-        Vector2d end = new Vector2d(db.x, db.y).add(5,5).div(200);
-        glBegin(GL_LINES);
-        glVertex2d(start.x, start.y);
-        glVertex2d(end.x, end.y);
-        glEnd();
-
         Vector3d color = Colors.NULL.getColor();
         switch (db.status) {
 
@@ -239,6 +282,38 @@ public class Renderer {
                     color = Colors.OWNED.getColor();
                 }
             }
+        }
+        switch (db.owner) {
+            case NONE -> TextRenderer.renderText(
+                    "*",
+                    new Vector2d((db.x - DB_SIZE/2 - 0.03), (db.y - DB_SIZE/2 - 0.03)).div(200),
+                    new Vector2d(0.03,0.03),
+                    new Vector3d(1,1,1)
+            );
+            case CTR -> TextRenderer.renderText(
+                    "C",
+                    new Vector2d((db.x - DB_SIZE/2 - 0.03), (db.y - DB_SIZE/2 - 0.03)).div(200),
+                    new Vector2d(0.03,0.03),
+                    new Vector3d(1,1,1)
+            );
+            case TWR -> TextRenderer.renderText(
+                    "T",
+                    new Vector2d((db.x - DB_SIZE/2 - 0.03), (db.y - DB_SIZE/2 - 0.03)).div(200),
+                    new Vector2d(0.03,0.03),
+                    new Vector3d(1,1,1)
+            );
+            case APP -> TextRenderer.renderText(
+                    "A",
+                    new Vector2d((db.x - DB_SIZE/2 - 0.03), (db.y - DB_SIZE/2 - 0.03)).div(200),
+                    new Vector2d(0.03,0.03),
+                    new Vector3d(1,1,1)
+            );
+            case DEP -> TextRenderer.renderText(
+                    "D",
+                    new Vector2d((db.x - DB_SIZE/2 - 0.03), (db.y - DB_SIZE/2 - 0.03)).div(200),
+                    new Vector2d(0.03,0.03),
+                    new Vector3d(1,1,1)
+            );
         }
         TextRenderer.renderText(
                 db.callsign,

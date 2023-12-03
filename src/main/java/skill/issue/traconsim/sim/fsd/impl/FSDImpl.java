@@ -52,9 +52,14 @@ public class FSDImpl implements IFSD {
                         db.owner = db.pointoutTarget;
                         db.pointoutTarget = Owner.NONE;
                     }
-                    case HIGHLIGHT -> {
-                        System.out.println("highlighted db");
-                        db.highlighted = true;
+                    case HIGHLIGHT -> db.highlighted = !db.highlighted;
+                    case TRACK_INITIATE -> {
+                        db.status = DBStatus.OWNED;
+                        db.owner = Owner.APP;
+                    }
+                    case TRACK_TERMINATE -> {
+                        db.status = DBStatus.UNOWNED;
+                        db.owner = Owner.NONE;
                     }
                 }
             }

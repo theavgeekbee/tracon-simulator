@@ -21,11 +21,12 @@ public class TextRenderer {
     public static void init() throws IOException, FontFormatException {
         VRCFont.init(64);
         System.out.print("Generating alias map...");
-        char[] chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
+        char[] chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789*+".toCharArray();
         for (char c : chars) {
             try (MemoryStack stack = MemoryStack.stackPush()) {
                 System.out.println("Generating alias for " + c);
                 String filePath = Character.isUpperCase(c) ? "src/main/resources/bitmap/" + c + "C.png" : "src/main/resources/bitmap/" + c + ".png";
+                if (c == '*') filePath = "src/main/resources/bitmap/asterisk.png";
                 IntBuffer widthBuffer = stack.mallocInt(1);
                 IntBuffer heightBuffer = stack.mallocInt(1);
                 IntBuffer channelsBuffer = stack.mallocInt(1);
@@ -54,6 +55,14 @@ public class TextRenderer {
         for (char c : s.toCharArray()) {
 
             if (c == ' ') {
+                x += charWidth;
+                continue;
+            }
+            if (c == '_') {
+                glBegin(GL_LINES);
+                glVertex2d(x, pos.y);
+                glVertex2d(x + charWidth, pos.y);
+                glEnd();
                 x += charWidth;
                 continue;
             }

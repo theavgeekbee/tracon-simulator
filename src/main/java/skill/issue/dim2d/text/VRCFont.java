@@ -16,7 +16,7 @@ public class VRCFont {
 
         System.out.println("Bitmap constructor initiated with image resolution " + size + "x" + size);
 
-        char[] chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".toCharArray();
+        char[] chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789*+".toCharArray();
         char[] letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
         for (char c : chars) {
             if (font.canDisplay(c)) {
@@ -26,6 +26,7 @@ public class VRCFont {
                 } else {
                     fileName = "" + c;
                 }
+                if (c == '*') fileName = "asterisk";
                 System.out.println("Loading bitmap texture " + c);
                 createFile("/resources/bitmap/" + fileName + ".png");
                 drawImage(size, c, font, fileName);
@@ -38,8 +39,8 @@ public class VRCFont {
         File file = new File("src/main/resources/bitmap");
         for (File f : Objects.requireNonNull(file.listFiles())) {
             if (f.getName().endsWith(".png")) {
-                f.delete();
-                System.out.println("Cleaned file " + f.getAbsolutePath());
+                if (!f.delete()) System.out.println("Failed to delete file " + f.getAbsolutePath());
+                else System.out.println("Cleaned file " + f.getAbsolutePath());
             }
         }
     }

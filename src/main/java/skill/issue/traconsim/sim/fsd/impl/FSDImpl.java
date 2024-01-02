@@ -4,11 +4,11 @@ import skill.issue.traconsim.sim.fsd.IFSD;
 import skill.issue.traconsim.sim.fsd.TickContext;
 import skill.issue.traconsim.sim.objects.DataBlock;
 import skill.issue.traconsim.sim.objects.Owner;
+import skill.issue.traconsim.sim.objects.Position;
 import skill.issue.traconsim.sim.ticking.TickData;
 import skill.issue.traconsim.sim.ticking.TickingDataBlockInformation;
 import skill.issue.traconsim.sim.utils.DBStatus;
 
-import javax.xml.crypto.Data;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +17,15 @@ public class FSDImpl implements IFSD {
     @Override
     public DataBlock[] getDataBlocks() {
         return dataBlocks.toArray(new DataBlock[0]);
+    }
+
+    @Override
+    public Position[] getOnlinePositions() {
+        return new Position[] {
+            Position.CURRENT,
+            new Position(Owner.APP, "HOU_81_CTR", "81"),
+            new Position(Owner.TWR, "IAH_E_TWR", "ET")
+        };
     }
 
     @Override

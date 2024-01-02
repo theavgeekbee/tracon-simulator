@@ -1,6 +1,7 @@
 package skill.issue.traconsim.sim.fsd;
 
 import skill.issue.traconsim.sim.objects.DataBlock;
+import skill.issue.traconsim.sim.objects.Position;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,5 +21,9 @@ public class FSDSupplier {
         if (fsd == null) throw new IllegalStateException("No valid FSD data supplier found!");
         ctx.checkPresence(List.of(fsd.getDataBlocks()));
         fsd.doTick(ctx);
+    }
+    public static Position[] getOnlinePositions() {
+        if (fsd == null) throw new IllegalStateException("No valid FSD data supplier found!");
+        return fsd.getOnlinePositions();
     }
 }

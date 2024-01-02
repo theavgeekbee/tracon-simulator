@@ -16,8 +16,6 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 
 public class Main {
-    public static final Owner POSITION = Owner.APP;
-    public static final String POSITION_STRING = "I90_D_APP";
     private static long win;
     public static final double ASPECT_RATIO = 4/3d;
     public static final int HEIGHT = 1000;

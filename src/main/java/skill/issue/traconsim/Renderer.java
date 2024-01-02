@@ -10,6 +10,7 @@ import skill.issue.dim2d.text.TextRenderer;
 import skill.issue.traconsim.sim.fsd.FSDSupplier;
 import skill.issue.traconsim.sim.fsd.TickContext;
 import skill.issue.traconsim.sim.objects.DataBlock;
+import skill.issue.traconsim.sim.objects.Position;
 import skill.issue.traconsim.sim.ticking.DataType;
 import skill.issue.traconsim.sim.ticking.EventStackItem;
 import skill.issue.traconsim.sim.ticking.TickData;
@@ -51,7 +52,7 @@ public class Renderer {
                         tickData.add(new TickData(DataType.HIGHLIGHT, null));
                     }
                     if (item.data().equals("SLEW")) {
-                        if (dataBlocks[i].status == DBStatus.HO && dataBlocks[i].owner != Main.POSITION) {
+                        if (dataBlocks[i].status == DBStatus.HO && dataBlocks[i].owner != Position.CURRENT.pos()) {
                             tickData.add(new TickData(DataType.HANDOFF_ACCEPT, null));
                         } else {
                             typedText += dataBlocks[i].callsign;
@@ -60,7 +61,7 @@ public class Renderer {
                     if (item.data().equals("KEY")) {
                         int key = item.key();
                         if (key == GLFW.GLFW_KEY_BACKSPACE) {
-                            if (typedText.length() > 0) typedText = typedText.substring(0, typedText.length() - 1);
+                            if (!typedText.isEmpty()) typedText = typedText.substring(0, typedText.length() - 1);
                         }
                         else if (key == GLFW.GLFW_KEY_ENTER) {
                             if (typedText.startsWith("IC ")) {
@@ -93,9 +94,9 @@ public class Renderer {
         mat.sub(0,0.1);
         TextRenderer.renderText("Online Positions", mat, new Vector2d(0.51,0.03), new Vector3d(1,1,1));
         mat.sub(0,0.04);
-        String[] onlinePositions = new String[] {"9D I90_D_APP", "ET IAH_E_TWR", "81 HOU_81_CTR"};
+        String[] onlinePositions = Position.supplierToString(FSDSupplier::getOnlinePositions);
         for (String s : onlinePositions) {
-            TextRenderer.renderText(s, mat, new Vector2d(0.03 * s.length(),0.03), s.substring(3).equals(Main.POSITION_STRING) ? new Vector3d(0,1,0) : new Vector3d(1,1,1));
+            TextRenderer.renderText(s, mat, new Vector2d(0.03 * s.length(),0.03), s.substring(3).equals(Position.CURRENT.name()) ? new Vector3d(0,1,0) : new Vector3d(1,1,1));
             mat.sub(0,0.04);
         }
 
@@ -325,7 +326,7 @@ public class Renderer {
         if (tick % 200 <= 100) {
             str = String.valueOf(db.altitude).substring(0, 3) + " " + String.valueOf(db.speed).substring(0, 2);
         } else {
-            str = "KIAH B737";
+            str = db.destination + " " + db.type;
         }
         TextRenderer.renderText(
                 str,

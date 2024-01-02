@@ -24,6 +24,9 @@ public class DataBlock {
     public long hoTicks = 0;
     public BoundingBox4d bb;
 
+    public String destination = "KIAH";
+    public String type = "B737";
+
     public DataBlock(String callsign, int altitude, double heading, int speed, double x, double y) {
         this.callsign = callsign;
         this.altitude = altitude;
@@ -66,7 +69,7 @@ public class DataBlock {
         x += speed * Math.sin(Math.toRadians(heading)) * 0.0001;
         y += speed * Math.cos(Math.toRadians(heading)) * 0.0001;
 
-        if (owner == Main.POSITION) {
+        if (owner == Position.CURRENT.pos()) {
             status = DBStatus.OWNED;
         }
         if (status == DBStatus.HO) {
